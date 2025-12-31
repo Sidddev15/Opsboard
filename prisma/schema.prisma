@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum RequestType {
+  TRANSPORT
+  FORKLIFT
+  PACKING_HELP
+  URGENT_PURCHASE
+  MACHINE_ISSUE
+  LABOUR_REQUIREMENT
+  OTHER
+}
+
+enum UrgencyLevel {
+  LOW
+  TODAY
+  NOW
+}
+
+enum RequestStatus {
+  NEW
+  IN_PROGRESS
+  WAITING
+  DONE
+}
+
+enum RequestEventType {
+  CREATED
+  OWNER_ASSIGNED
+  STATUS_CHANGED
+  CLOSED
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  password  String
+  isActive  Boolean  @default(true)
+
+  ownedRequests   Request[] @relation("Owner")
+  createdRequests Request[] @relation("Creator")
+  events          RequestEvent[]
+
+  createdAt DateTime @default(now())
+}
+
+model Request {
+  id          String   @id @default(uuid())
+
+  type        RequestType
+  description String
+
+  urgency     UrgencyLevel
+  location    String
+  requestedBy String
+
+  status      RequestStatus
+
+  ownerId     String
+  owner       User     @relation("Owner", fields: [ownerId], references: [id])
+
+  createdById String
+  createdBy   User     @relation("Creator", fields: [createdById], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  closedAt    DateTime?
+
+  events      RequestEvent[]
+
+  @@index([status])
+  @@index([urgency])
+  @@index([createdAt])
+}
+
+model RequestEvent {
+  id        String   @id @default(uuid())
+
+  requestId String
+  request   Request  @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  type      RequestEventType
+  fromValue String?
+  toValue   String?
+
+  performedById String
+  performedBy   User @relation(fields: [performedById], references: [id])
+
+  createdAt DateTime @default(now())
+}
