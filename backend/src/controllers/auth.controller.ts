@@ -45,3 +45,12 @@ export async function login(req: Request, res: Response) {
 export async function me(req: Request, res: Response) {
     return res.json({ user: req.user });
 }
+
+export async function listUsers(_req: Request, res: Response) {
+    const users = await prisma.user.findMany({
+        where: { isActive: true },
+        select: { id: true, name: true },
+        orderBy: { name: "asc" },
+    });
+    return res.json({ users });
+}
