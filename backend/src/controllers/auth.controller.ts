@@ -5,18 +5,34 @@ import { loginSchema } from "../schemas/auth.schemas.js";
 import { signToken } from "../services/jwt.js";
 
 export async function login(req: Request, res: Response) {
-    const body = loginSchema.parse(req.body);
+    const parsed = loginSchema.safeParse(req.body);
+    if (!parsed.success) {
+        return res.status(400).json({ error: "VALIDATION_ERROR", details: parsed.error.issues });
+    }
+    const body = parsed.data;
 
     const user = await prisma.user.findUnique({
         where: { email: body.email },
     });
 
-    if (!user || !user.isActive) {
-        return res.status(401).json({ error: "INVALID_CREDENTIALS" });
+    if (!user) {
+        // eslint-disable-next-line no-console
+        console.warn("Login failed: user not found", { email: body.email });
+        return res.status(401).json({ error: "INVALID_CREDENTIALS", reason: "USER_NOT_FOUND" });
     }
 
-    const ok = await bcrypt.compare(body.password, user.password);
-    if (!ok) return res.status(401).json({ error: "INVALID_CREDENTIALS" });
+    if (!user.isActive) {
+        // eslint-disable-next-line no-console
+        console.warn("Login failed: user inactive", { email: body.email });
+        return res.status(401).json({ error: "INVALID_CREDENTIALS", reason: "USER_INACTIVE" });
+    }
+
+    const ok = await bcrypt.compare(body.password, user.password).catch(() => false);
+    if (!ok) {
+        // eslint-disable-next-line no-console
+        console.warn("Login failed: bad password", { email: body.email });
+        return res.status(401).json({ error: "INVALID_CREDENTIALS", reason: "BAD_PASSWORD" });
+    }
 
     const token = signToken(user.id);
 
