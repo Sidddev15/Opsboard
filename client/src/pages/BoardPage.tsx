@@ -5,8 +5,10 @@ import { useAuth } from '../state/auth';
 import { EDITOR_EMAILS } from '../lib/config';
 import { hhmm, urgencyStyle } from '../lib/format';
 import RequestDrawer from '../components/RequestDrawer';
+import AddRequestModal from '../components/AddRequestModal';
 
 export default function BoardPage() {
+  const [showAdd, setShowAdd] = useState(false);
   const { token, user, logout } = useAuth();
   const [items, setItems] = useState<BoardRequest[]>([]);
   const [loading, setLoading] = useState(true);
@@ -138,6 +140,18 @@ export default function BoardPage() {
           canEdit={canEdit}
           onUpdated={load}
         />
+      )}
+
+      {showAdd && (
+        <AddRequestModal onClose={() => setShowAdd(false)} onCreated={load} />
+      )}
+
+      {canEdit && (
+        <div className="fab">
+          <button className="btn primary" onClick={() => setShowAdd(true)}>
+            + ADD REQUEST
+          </button>
+        </div>
       )}
     </div>
   );
