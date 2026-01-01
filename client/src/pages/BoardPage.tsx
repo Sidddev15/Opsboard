@@ -52,9 +52,6 @@ export default function BoardPage() {
           </div>
         </div>
         <div className="row">
-          <button className="btn" onClick={load} disabled={loading}>
-            Refresh
-          </button>
           <button className="btn" onClick={logout}>
             Logout
           </button>
@@ -100,8 +97,15 @@ export default function BoardPage() {
             {items.map((r) => (
               <tr
                 key={r.id}
-                style={{ ...urgencyStyle(r.urgency as any), cursor: 'pointer' }}
-                onClick={() => setSelectedId(r.id)}
+                style={{
+                  ...urgencyStyle(r.urgency as any, r.status),
+                  cursor: 'pointer',
+                }}
+                onClick={(e) => {
+                  const target = e.target as HTMLElement;
+                  if (target.closest('button, select, option, input')) return;
+                  setSelectedId(r.id);
+                }}
               >
                 <td>
                   <span className="badge">
