@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { apiFetch, HttpError } from '../lib/http';
 import { useAuth } from '../state/auth';
 import type { RequestType, UrgencyLevel } from '../types/api';
@@ -30,9 +30,19 @@ export default function AddRequestModal({
   const [location, setLocation] = useState('');
   const [requestedBy, setRequestedBy] = useState('');
   const [ownerId, setOwnerId] = useState('');
+  const [users, setUsers] = useState<{ id: string; name: string }[]>([]);
 
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!token) return;
+    apiFetch<{ users: { id: string; name: string }[] }>('/auth/users', {
+      token,
+    })
+      .then((res) => setUsers(res.users))
+      .catch(() => setUsers([]));
+  }, [token]);
 
   const canSubmit =
     type &&
@@ -147,13 +157,19 @@ export default function AddRequestModal({
           </label>
 
           <label className="col">
-            <div className="small">Owner (UUID)</div>
-            <input
-              className="input"
-              placeholder="Paste owner userId"
+            <div className="small">Owner</div>
+            <select
+              className="select"
               value={ownerId}
               onChange={(e) => setOwnerId(e.target.value)}
-            />
+            >
+              <option value="">Select owner</option>
+              {users.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {u.name}
+                </option>
+              ))}
+            </select>
           </label>
 
           {err && (

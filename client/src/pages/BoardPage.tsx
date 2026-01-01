@@ -7,6 +7,8 @@ import { hhmm, urgencyStyle } from '../lib/format';
 import RequestDrawer from '../components/RequestDrawer';
 import AddRequestModal from '../components/AddRequestModal';
 
+const isMobile = window.innerWidth < 768;
+
 export default function BoardPage() {
   const [showAdd, setShowAdd] = useState(false);
   const { token, user, logout } = useAuth();
@@ -74,61 +76,81 @@ export default function BoardPage() {
 
         <div className="sep" />
 
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Urgency</th>
-              <th>Type</th>
-              <th>Description</th>
-              <th>Owner</th>
-              <th>Status</th>
-              <th>⏱</th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.length === 0 && (
+        {!isMobile ? (
+          <table className="table">
+            <thead>
               <tr>
-                <td colSpan={6} className="muted">
-                  Nothing active. Good.
-                </td>
+                <th>Urgency</th>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Owner</th>
+                <th>Status</th>
+                <th>⏱</th>
               </tr>
-            )}
-
+            </thead>
+            <tbody>
+              {items.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="muted">
+                    Nothing active.
+                  </td>
+                </tr>
+              )}
+              {items.map((r) => (
+                <tr
+                  key={r.id}
+                  style={{
+                    ...urgencyStyle(r.urgency as any, r.status),
+                    cursor: 'pointer',
+                  }}
+                  onClick={(e) => {
+                    const t = e.target as HTMLElement;
+                    if (t.closest('button,select,input')) return;
+                    setSelectedId(r.id);
+                  }}
+                >
+                  <td>{r.urgency}</td>
+                  <td className="small">{r.type}</td>
+                  <td>{r.description}</td>
+                  <td>{r.owner?.name}</td>
+                  <td>
+                    <span className="badge">{r.status}</span>
+                  </td>
+                  <td className="small">{hhmm(r.createdAt)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <div className="col">
             {items.map((r) => (
-              <tr
+              <div
                 key={r.id}
-                style={{
-                  ...urgencyStyle(r.urgency as any, r.status),
-                  cursor: 'pointer',
-                }}
-                onClick={(e) => {
-                  const target = e.target as HTMLElement;
-                  if (target.closest('button, select, option, input')) return;
-                  setSelectedId(r.id);
-                }}
+                className="card"
+                style={{ ...urgencyStyle(r.urgency as any, r.status) }}
+                onClick={() => setSelectedId(r.id)}
               >
-                <td>
-                  <span className="badge">
-                    {r.urgency === 'NOW'
-                      ? '🔴 NOW'
-                      : r.urgency === 'TODAY'
-                      ? '🟠 TODAY'
-                      : '⚪ LOW'}
+                <div
+                  className="row"
+                  style={{ justifyContent: 'space-between' }}
+                >
+                  <b>{r.description}</b>
+                  <span className="badge">{r.urgency}</span>
+                </div>
+                <div className="small muted">{r.type}</div>
+                <div className="row small">
+                  <span>
+                    Owner: <b>{r.owner?.name}</b>
                   </span>
-                </td>
-                <td className="small">{r.type}</td>
-                <td>{r.description}</td>
-                <td>{r.owner?.name}</td>
-                <td>
-                  <span className="badge">{r.status}</span>
-                </td>
-                <td className="small" title={r.createdAt}>
-                  {hhmm(r.createdAt)}
-                </td>
-              </tr>
+                  <span>
+                    Status: <b>{r.status}</b>
+                  </span>
+                </div>
+                <div className="small muted">⏱ {hhmm(r.createdAt)}</div>
+              </div>
             ))}
-          </tbody>
-        </table>
+          </div>
+        )}
       </div>
 
       {!canEdit && (
