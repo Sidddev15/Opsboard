@@ -4,12 +4,14 @@ import type { BoardRequest, BoardResponse } from '../types/api';
 import { useAuth } from '../state/auth';
 import { EDITOR_EMAILS } from '../lib/config';
 import { hhmm, urgencyStyle } from '../lib/format';
+import RequestDrawer from '../components/RequestDrawer';
 
 export default function BoardPage() {
   const { token, user, logout } = useAuth();
   const [items, setItems] = useState<BoardRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const canEdit = useMemo(() => {
     if (!user) return false;
@@ -94,7 +96,11 @@ export default function BoardPage() {
             )}
 
             {items.map((r) => (
-              <tr key={r.id} style={urgencyStyle(r.urgency as any)}>
+              <tr
+                key={r.id}
+                style={{ ...urgencyStyle(r.urgency as any), cursor: 'pointer' }}
+                onClick={() => setSelectedId(r.id)}
+              >
                 <td>
                   <span className="badge">
                     {r.urgency === 'NOW'
@@ -123,6 +129,15 @@ export default function BoardPage() {
         <div className="small muted" style={{ marginTop: 12 }}>
           Read-only mode: you can view everything here. Nothing is hidden.
         </div>
+      )}
+
+      {selectedId && (
+        <RequestDrawer
+          requestId={selectedId}
+          onClose={() => setSelectedId(null)}
+          canEdit={canEdit}
+          onUpdated={load}
+        />
       )}
     </div>
   );
