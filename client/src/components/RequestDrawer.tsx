@@ -179,7 +179,7 @@ export default function RequestDrawer({
                   <select
                     className="select"
                     disabled={busy || data.request.status === 'DONE'}
-                    style={{ opacity: busy ? 0.6 : 1 }}
+                    style={{ opacity: busy ? 0.6 : 1, marginTop: '10px' }}
                     value={data.request.owner?.id}
                     onChange={(e) => assignOwner(e.target.value)}
                   >

@@ -6,9 +6,10 @@ async function main() {
 
     const users = [
         { email: "siddharth@opsboard.local", name: "Siddharth", password },
-        { email: "father@opsboard.local", name: "Father", password },
-        { email: "partner1@opsboard.local", name: "Partner 1", password },
-        { email: "ops@opsboard.local", name: "Ops Guy", password },
+        { email: "sandeep@opsboard.local", name: "Sandeep", password },
+        { email: "ashok@opsboard.local", name: "Ashok", password },
+        { email: "ramakant@opsboard.local", name: "Ramakant", password },
+        { email: "sanjaymalik@opsboard.local", name: "Sanjay", password },
     ];
 
     for (const u of users) {
