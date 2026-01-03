@@ -1,13 +1,13 @@
 import { Router } from "express";
-import { requireAuth } from "../middlewares/auth.js";
+import { requireAuth } from "../middlewares/auth";
 import {
     assignOwner,
     changeStatus,
     closeRequest,
     createRequest,
     history,
-} from "../controllers/request.controller.js";
-import { asyncHandler } from "../lib/asyncHandler.js";
+} from "../controllers/request.controller";
+import { asyncHandler } from "../lib/asyncHandler";
 
 const router = Router();
 

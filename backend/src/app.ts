@@ -1,11 +1,11 @@
 import express from "express";
 import cors from "cors";
-import { env } from "./lib/env.js";
-import { errorHandler } from "./middlewares/error.js";
+import { env } from "./lib/env";
+import { errorHandler } from "./middlewares/error";
 
-import authRoutes from "./routes/auth.routes.js";
-import requestRoutes from "./routes/request.routes.js";
-import boardRoutes from "./routes/board.routes.js";
+import authRoutes from "./routes/auth.routes";
+import requestRoutes from "./routes/request.routes";
+import boardRoutes from "./routes/board.routes";
 
 export const app = express();
 

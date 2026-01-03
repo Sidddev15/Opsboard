@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
-import { prisma } from "../lib/prisma.js";
-import { verifyToken } from "../services/jwt.js";
+import { prisma } from "../lib/prisma";
+import { verifyToken } from "../services/jwt";
 
 export async function requireAuth(req: Request, res: Response, next: NextFunction) {
     const header = req.headers.authorization;

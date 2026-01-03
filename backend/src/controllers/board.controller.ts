@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { prisma } from "../lib/prisma.js";
+import { prisma } from "../lib/prisma";
 
 const urgencyRank: Record<string, number> = { NOW: 0, TODAY: 1, LOW: 2 };
 

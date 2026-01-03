@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
-import { prisma } from "../lib/prisma.js";
-import { assertTransition } from "../services/request.rules.js";
-import { assignSchema, createRequestSchema, statusSchema } from "../schemas/request.schemas.js";
+import { prisma } from "../lib/prisma";
+import { assertTransition } from "../services/request.rules";
+import { assignSchema, createRequestSchema, statusSchema } from "../schemas/request.schemas";
 import { RequestEventType, RequestStatus } from "@prisma/client";
 
 export async function createRequest(req: Request, res: Response) {
