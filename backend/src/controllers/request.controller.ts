@@ -8,12 +8,17 @@ export async function createRequest(req: Request, res: Response) {
     const user = req.user!;
     const body = createRequestSchema.parse(req.body);
 
-    // verify owner exists & active
+    // OWNER IS ALWAYS THE LOGGED-IN USER
+    const ownerId = user.id;
+
+    // verify owner exists & active (logged-in user)
     const owner = await prisma.user.findUnique({
-        where: { id: body.ownerId },
+        where: { id: ownerId },
         select: { id: true, isActive: true },
     });
-    if (!owner || !owner.isActive) return res.status(400).json({ error: "INVALID_OWNER" });
+    if (!owner || !owner.isActive) {
+        return res.status(400).json({ error: "INVALID_OWNER" });
+    }
 
     const created = await prisma.request.create({
         data: {
@@ -23,8 +28,11 @@ export async function createRequest(req: Request, res: Response) {
             location: body.location,
             requestedBy: body.requestedBy,
             status: "NEW",
-            ownerId: body.ownerId,
+
+            // 🔑 FIX HERE
+            ownerId: ownerId,
             createdById: user.id,
+
             events: {
                 create: [
                     {
@@ -34,7 +42,7 @@ export async function createRequest(req: Request, res: Response) {
                     {
                         type: RequestEventType.OWNER_ASSIGNED,
                         fromValue: null,
-                        toValue: body.ownerId,
+                        toValue: ownerId,
                         performedById: user.id,
                     },
                 ],
@@ -45,6 +53,7 @@ export async function createRequest(req: Request, res: Response) {
 
     return res.status(201).json({ request: created });
 }
+
 
 export async function assignOwner(req: Request, res: Response) {
     const user = req.user!;

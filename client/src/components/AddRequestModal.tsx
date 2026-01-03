@@ -59,16 +59,15 @@ export default function AddRequestModal({
     try {
       await apiFetch('/requests', {
         method: 'POST',
-        token,
         body: {
           type,
           description: description.trim(),
           urgency,
           location: location.trim(),
           requestedBy: requestedBy.trim(),
-          ownerId,
         },
       });
+
       onCreated();
       onClose();
     } catch (e) {
