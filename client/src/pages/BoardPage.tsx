@@ -13,7 +13,7 @@ export default function BoardPage() {
   const [showAdd, setShowAdd] = useState(false);
   const { token, user, logout } = useAuth();
   const [items, setItems] = useState<BoardRequest[]>([]);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -24,16 +24,17 @@ export default function BoardPage() {
 
   async function load() {
     if (!token) return;
-    setLoading(true);
+    // setLoading(true);
     setErr(null);
     try {
       const data = await apiFetch<BoardResponse>('/board', { token });
       setItems(data.requests);
     } catch (e: any) {
       setErr(e?.message || 'FAILED_TO_LOAD_BOARD');
-    } finally {
-      setLoading(false);
     }
+    // finally {
+    //   setLoading(false);
+    // }
   }
 
   useEffect(() => {
@@ -61,8 +62,6 @@ export default function BoardPage() {
       </div>
 
       <div className="sep" />
-
-      {loading && <div className="small">Loading…</div>}
 
       {err && (
         <div className="card" style={{ borderColor: 'rgba(255,0,0,0.4)' }}>
