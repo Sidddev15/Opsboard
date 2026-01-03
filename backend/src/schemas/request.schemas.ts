@@ -18,7 +18,7 @@ export const createRequestSchema = z.object({
     urgency: urgencyEnum,
     location: z.string().min(2).max(80),
     requestedBy: z.string().min(2).max(60),
-    ownerId: z.string().uuid(),
+    ownerId: z.string().uuid().optional(),
 });
 
 export const assignSchema = z.object({

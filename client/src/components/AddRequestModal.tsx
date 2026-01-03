@@ -65,7 +65,9 @@ export default function AddRequestModal({
           urgency,
           location: location.trim(),
           requestedBy: requestedBy.trim(),
+          ownerId,
         },
+        token,
       });
 
       onCreated();

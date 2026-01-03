@@ -8,10 +8,10 @@ export async function createRequest(req: Request, res: Response) {
     const user = req.user!;
     const body = createRequestSchema.parse(req.body);
 
-    // OWNER IS ALWAYS THE LOGGED-IN USER
-    const ownerId = user.id;
+    // Owner defaults to the logged-in user unless explicitly provided
+    const ownerId = body.ownerId ?? user.id;
 
-    // verify owner exists & active (logged-in user)
+    // verify owner exists & is active
     const owner = await prisma.user.findUnique({
         where: { id: ownerId },
         select: { id: true, isActive: true },
