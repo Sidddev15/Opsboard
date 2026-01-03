@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { apiFetch, HttpError } from '../lib/http';
+import { apiFetch } from '../lib/http';
 import { useAuth } from '../state/auth';
 import type { BoardRequest, RequestStatus } from '../types/api';
 import { hhmm } from '../lib/format';

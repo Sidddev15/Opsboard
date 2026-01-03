@@ -62,6 +62,8 @@ export default function BoardPage() {
 
       <div className="sep" />
 
+      {loading && <div className="small">Loading…</div>}
+
       {err && (
         <div className="card" style={{ borderColor: 'rgba(255,0,0,0.4)' }}>
           {err}
