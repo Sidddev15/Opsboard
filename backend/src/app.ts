@@ -11,7 +11,10 @@ export const app = express();
 
 app.use(
     cors({
-        origin: env.CORS_ORIGIN === "*" ? true : env.CORS_ORIGIN,
+        origin: [
+            'http://localhost:5173',
+            'https://opsboard-client.vercel.app',
+        ],
         credentials: true,
     })
 );
