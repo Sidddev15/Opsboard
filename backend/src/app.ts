@@ -9,12 +9,11 @@ import boardRoutes from "./routes/board.routes";
 
 export const app = express();
 
+const allowedOrigins = env.CORS_ORIGIN.split(",").map((o) => o.trim()).filter(Boolean);
+
 app.use(
     cors({
-        origin: [
-            'http://localhost:5173',
-            'https://opsboard-client.vercel.app',
-        ],
+        origin: allowedOrigins.length > 0 ? allowedOrigins : undefined,
         credentials: true,
     })
 );
